@@ -208,21 +208,32 @@
 const envelope = document.querySelector('.envelope');
 const paper = envelope.querySelector('.paper');
 
+let isClosing = false;
+
 // When the paper finishes opening, remove the mask completely
 paper.addEventListener('transitionend', (e) => {
   if (e.propertyName === 'clip-path' && (envelope.matches(':hover, :focus-within'))) {
     envelope.classList.add('open');
   }
+
+  // When closing: after transform ends, THEN restore clip-path
+  if (isClosing && e.propertyName === 'transform') {
+    envelope.classList.remove('open'); // put the mask back
+    isClosing = false;
+  }
 });
 
-// When hover/focus ends, reset the state
-envelope.addEventListener('mouseleave', () => {
-  envelope.classList.remove('open');
-});
+// Closing triggers
+function startClose() {
+  if (envelope.classList.contains('open')) {
+    isClosing = true; 
+    // paper will slide back (transform animates),
+    // after which 'transitionend' puts mask back
+  }
+}
 
-envelope.addEventListener('blur', () => {
-  envelope.classList.remove('open');
-}, true); // use capture so it works for children too
+envelope.addEventListener('mouseleave', startClose);
+envelope.addEventListener('blur', startClose, true);
   </script>
 </body>
 </html>
