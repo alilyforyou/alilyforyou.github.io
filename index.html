@@ -235,6 +235,19 @@ function startClose() {
 
 envelope.addEventListener('mouseleave', startClose);
 envelope.addEventListener('blur', startClose, true);
+// 👇 new: close when clicking/tapping outside (mobile-friendly)
+document.addEventListener('click', (e) => {
+  if (!envelope.contains(e.target)) {
+    startClose();
+  }
+});
+
+// if you want touchstart to be more responsive
+document.addEventListener('touchstart', (e) => {
+  if (!envelope.contains(e.target)) {
+    startClose();
+  }
+}, { passive: true });
   </script>
 </body>
 </html>
