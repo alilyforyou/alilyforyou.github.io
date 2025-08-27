@@ -1,0 +1,91 @@
+/* General styling for centering and background */
+body {
+    display: grid;
+    place-items: center;
+    min-height: 100vh;
+    background-color: #f0f4f8;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  .envelope-wrapper {
+    perspective: 1000px; /* Adds 3D perspective to the container */
+  }
+  
+  /* 1. Basic Structure: The main envelope container */
+  .envelope {
+    position: relative;
+    width: 320px;
+    aspect-ratio: 16 / 10;
+    background-color: #e0e6eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1), 0 0 2px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    transform-style: preserve-3d; /* Enables 3D transformations for children */
+  }
+  
+  /* 1. Basic Structure: The paper inside */
+  .paper {
+    position: absolute;
+    width: 90%;
+    height: 90%;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #ffffff;
+    z-index: 1;
+    border-radius: 6px;
+    
+    /* 3. Clipping & Masking: Initial triangular mask */
+    clip-path: polygon(0% 0%, 100% 0%, 50% 55%, 50% 55%);
+    
+    /* ✨ CORRECTED LINE HERE ✨ */
+    /* Animation durations for sliding and masking are now synchronized */
+    transition: transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    clip-path 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  }
+  
+  .paper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+  }
+  
+  /* 1. Basic Structure: The flap */
+  .flap {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 55%;
+    background-color: #d1d9e0;
+    z-index: 2;
+    
+    clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+    transform-origin: top;
+    
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: 0.6s; /* Delay closing animation */
+  }
+  
+  /* 4. Interactivity: Animation triggered on hover or keyboard focus */
+  .envelope:hover .flap,
+  .envelope:focus-within .flap {
+    transform: rotateX(180deg);
+    transition-delay: 0s; /* Remove delay when opening */
+  }
+  
+  .envelope:hover .paper,
+  .envelope:focus-within .paper {
+    transform: translateY(-75%) translateX(-50%) translateZ(20px);
+  
+    /* full rectangle */
+    clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  
+    /* Delay both animations until the flap is mostly open */
+    transition-delay: 0.4s;
+  }
+  /* Once fully open → no clipping at all */
+.envelope.open .paper {
+    clip-path: none; /* remove mask */
+  }

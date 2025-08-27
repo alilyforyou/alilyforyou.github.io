@@ -1,0 +1,100 @@
+body {
+  background: #99c;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+}
+
+.envelope-wrapper {
+  position: relative;
+  width: 400px;
+  height: 280px;
+  perspective: 700px;
+  overflow: visible; /* <-- allow flap to extend outside */
+}
+
+.envelope {
+  position: relative;
+  width: 360px;
+  height: 240px;
+  background: #eee; /* envelope color */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.paper-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background: #eee; /* envelope color */
+  pointer-events: none;
+  z-index: 15; /* above paper */
+}
+
+/* Paper inside envelope */
+.paper {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  background: white;
+  box-shadow: inset 0 0 8px rgba(0, 0, 0, 0.1);
+  z-index: -1;
+  overflow: hidden;
+  /* transition for sliding up */
+  transition: top 1s ease;
+  transition-delay: 1s; /* delay so flap opens first */
+}
+
+.paper img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  user-select: none;
+}
+
+/* Paper flap (the cover flap) */
+/* Paper flap (the cover flap) */
+.paper-flap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  transform-origin: top center;
+  transition: transform 1s ease;
+  background: #ddd;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 2;
+}
+
+/* Hover: open flap */
+.envelope-wrapper:hover .paper-flap {
+  transform: rotateX(-180deg);
+}
+
+.envelope-wrapper:hover .paper {
+  top: -100px; /* slide up */
+  z-index: 20;
+  transition: top 1s ease 1s; /* delay for flap */
+}
+
+.envelope-wrapper:hover .paper-container {
+  overflow: visible; /* allow paper to be visible outside */
+  top: 0; /* no vertical move */
+  clip-path: polygon(0 0, 100% 0, 50% 100%); /* keep clip */
+  z-index: 20;
+  transition: none; /* no top transition */
+}
+
+/*# sourceMappingURL=postcard.css.map */

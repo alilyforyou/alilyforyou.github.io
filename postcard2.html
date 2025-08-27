@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blooming Lily Animation</title>
+  <link rel="stylesheet" href="styles/style.css">
+  <style>
+    /* General styling for centering and background */
+    body {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      background-color: #f0f4f8;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .envelope-wrapper {
+      perspective: 1000px; /* Adds 3D perspective to the container */
+    }
+
+    /* Main envelope container */
+    .envelope {
+      position: relative;
+
+      width: 320px;
+      aspect-ratio: 16 / 10;
+      background-color: #e0e6eb;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1),
+                  0 0 2px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transform-style: preserve-3d; /* Enables 3D transformations for children */
+      /* overflow: hidden; prevents paper overflow flickers */
+    }
+
+    .address {
+        position: absolute;
+        bottom: 0px;
+        right: 5px;
+
+        img {
+            width: 50px;
+            height: 50px
+        }
+    }
+
+    /* Paper inside */
+    .paper {
+      position: absolute;
+      width: 90%;
+      height: 95%;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background-color: #ffffff;
+      z-index: 1;
+      border-radius: 6px;
+
+      /* Initial triangular mask (hidden state) */
+      clip-path:  polygon(0% 0%, 100% 0%, 50% 40%, 50% 40%);
+
+      /* Smooth opening */
+      transition:
+        transform 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+        clip-path 0.6s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    }
+
+    .paper-text {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .paper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+      display: block;
+    }
+
+    /* Flap */
+    .flap {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 55%;
+      background-color: #d1d9e0;
+      z-index: 2;
+
+      clip-path: polygon(0% 0%, 100% 0%, 50% 100%);
+      transform-origin: top;
+
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition-delay: 0.6s; /* delay only applies when closing */
+    }
+
+    /* Interactivity: Animation on hover or keyboard focus */
+    .envelope:hover .flap,
+    .envelope:focus-within .flap {
+      transform: rotateX(180deg);
+      transition-delay: 0s; /* open immediately */
+    }
+
+    .envelope:hover .paper,
+    .envelope:focus-within .paper {
+      transform: translateY(-75%) translateX(-50%) translateZ(20px);
+      clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+      transition-delay: 0.4s; /* wait until flap mostly open */
+    }
+
+    .container {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+/* CLOSING: delay clip-path */
+.envelope .paper {
+  transition-delay: 0s, 0.4s; /* transform immediately, clip-path delayed */
+}
+
+    /* Once fully open → no clipping at all */
+    .envelope.open .paper {
+      clip-path: none;
+    }
+
+
+  </style>
+</head>
+<body>
+    <div class="container">
+    <div class="flower-container">
+        <div class="stem"></div>
+        <div class="leaves">
+            <div class="leaf leaf-left"></div>
+            <div class="leaf leaf-right"></div>
+        </div>
+        <div class="flower">
+            <div class="petal petal-1"></div>
+            <div class="petal petal-2"></div>
+            <div class="petal petal-3"></div>
+            <div class="petal petal-4"></div>
+            <div class="petal petal-5"></div>
+            <div class="petal petal-6"></div>
+            <div class="stamens">
+                <div class="stamen stamen-1"></div>
+                <div class="stamen stamen-2"></div>
+                <div class="stamen stamen-3"></div>
+                <div class="stamen stamen-4"></div>
+                <div class="stamen stamen-5"></div>
+            </div>
+        </div>
+    </div>
+  <div class="envelope-wrapper">
+    <div class="envelope" tabindex="0">
+
+        <div class="envelope">
+            <div class="stamp">
+        <img src="assets/milin-solo.jpg" />
+
+            </div>
+
+            <div class="address">
+                <p>To Milin</p>
+
+            </div>
+      <div class="paper">
+        <div class="paper-text">
+            <p> Dear Milin,</p>
+        <p>Lilies as promised :)</p>
+        <p> From Aswin</p>
+    </div>
+      </div>
+      <div class="flap"></div>
+    </div>
+  </div>
+</div>
+  <script>
+const envelope = document.querySelector('.envelope');
+const paper = envelope.querySelector('.paper');
+
+// When the paper finishes opening, remove the mask completely
+paper.addEventListener('transitionend', (e) => {
+  if (e.propertyName === 'clip-path' && (envelope.matches(':hover, :focus-within'))) {
+    envelope.classList.add('open');
+  }
+});
+
+// When hover/focus ends, reset the state
+envelope.addEventListener('mouseleave', () => {
+  envelope.classList.remove('open');
+});
+
+envelope.addEventListener('blur', () => {
+  envelope.classList.remove('open');
+}, true); // use capture so it works for children too
+  </script>
+</body>
+</html>
